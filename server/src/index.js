@@ -1,6 +1,8 @@
 const express = require('express');
 const routes = require('./routes');
 const sequelize = require('../config/connection');
+const cors = require('cors')
+
 
 const app = express();
 const server = require('http').createServer(app);
@@ -25,8 +27,12 @@ app.use(session(sess));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors())
+
 // turn on routes
 app.use(routes);
+
+
 
 // turn on connection to db and server
 sequelize.sync({ force: false }).then(() => {

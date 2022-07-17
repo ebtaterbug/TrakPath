@@ -79,6 +79,7 @@ router.post('/login', (req, res) => {
       req.session.username = dbUserData.username;
       req.session.loggedIn = true;
 
+      res.header({'Access-Control-Allow-Origin': '*'})
       res.json({ user: dbUserData, message: 'You are logged in.' });
     });
   });
