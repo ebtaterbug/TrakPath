@@ -1,22 +1,34 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const routes = require("./routes");
-require("dotenv").config();
+const express = require('express');
+const routes = require('./routes');
+const sequelize = require('../config/connection');
 
 const app = express();
-const port = 3001;
+const server = require('http').createServer(app);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+const session = require('express-session');
 
-app.use("/", routes);
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
-app.listen(port, () => {
-  console.log(
-    process.env.HELLO_WORLD || "You need to create and populate your .env file"
-  );
-  console.log(`Example app listening on port ${port}`);
+const sess = {
+  secret: 'Super secret secret',
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
+
+app.use(session(sess));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// turn on routes
+app.use(routes);
+
+// turn on connection to db and server
+sequelize.sync({ force: false }).then(() => {
+  server.listen(PORT, () => console.log(`Now listening at http://localhost:${PORT}`));
 });

@@ -1,12 +1,10 @@
-const express = require("express");
-const flashcardRoutes = require("./flashCards");
+const router = require('express').Router();
+const apiRoutes = require('./api');
 
-const router = express.Router();
+router.use('/api', apiRoutes);
 
-router.get("/", (req, res) => {
-  res.send("Hello World!");
+router.use((req, res) => {
+  res.status(404).end();
 });
-
-router.use("/flashcards", flashcardRoutes);
 
 module.exports = router;
